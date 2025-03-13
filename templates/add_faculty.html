@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Faculty</title>
+  <link rel="stylesheet" href="static/adminn.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <div class="navbar">
+    <ul>
+      <li><a href="{{'/admin_dashboard'}}">Home</a></li>
+      <li class="dropdown">
+        <a href="#" class="dropbtn">Manage Students</a>
+        <div class="dropdown-content">
+          <a href="{{'/addStudent'}}">Add Student</a>
+          <a href="{{'/removeStudent'}}">Remove Student</a>
+          <a href="{{'/modifyStudent'}}">Modify Student Details</a>
+          <a href="{{'/viewStudent'}}">View Student Details</a>
+        </div>
+      </li>
+      <li class="dropdown">
+        <a href="#" class="dropbtn">Manage Faculty</a>
+        <div class="dropdown-content">
+          <a href="{{'/addFaculty'}}">Add Faculty</a>
+          <a href="{{'/removeFaculty'}}">Remove Faculty</a>
+          <a href="{{'/modifyFaculty'}}">Modify Faculty Details</a>
+          <a href="{{'/viewFaculty'}}">View Faculty Details</a>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Main Content -->
+  <div class="container">
+    <h1>Add New Faculty Member</h1>
+
+    <form id="add-faculty-form" action="/add_faculty" method="POST" enctype="multipart/form-data">
+      <div class="form-group">
+        <label for="first-name">First Name:</label>
+        <input type="text" id="first-name" name="first_name" required>
+      </div>
+
+      <div class="form-group">
+        <label for="last-name">Last Name:</label>
+        <input type="text" id="last-name" name="last_name" required>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+      </div>
+
+      <div class="form-group">
+        <label for="department">Department:</label>
+        <input type="text" id="department" name="dept" required>
+      </div>
+
+      <div class="form-group">
+        <label for="faculty-phone">Faculty Phone:</label>
+        <input type="text" id="faculty-phone" name="faculty_phone" required>
+      </div>
+
+      <div class="form-group">
+        <label for="room-no">Room Number:</label>
+        <input type="text" id="room-no" name="room_no" required>
+      </div>
+
+      <div class="form-group">
+        <label for="category">Category:</label>
+        <select id="category" name="category" required>
+          <option value="HOD">HOD</option>
+          <option value="Incharge">Incharge</option>
+          <option value="Security">Security</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+      </div>
+
+      <div class="form-group">
+        <label for="photo">Photo:</label>
+        <input type="file" id="photo" name="photo" accept="image/*">
+      </div>
+
+      <button type="submit">Add Faculty</button>
+    </form>
+  </div>
+
+  <script>
+    // Handle the form submission for adding a new faculty member
+    document.getElementById('add-faculty-form').addEventListener('submit', function (e) {
+  e.preventDefault();
+
+  const formData = new FormData(this);
+
+  fetch('/add_faculty', {
+    method: 'POST',
+    body: formData
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      alert('Faculty member added successfully!');
+      document.getElementById('add-faculty-form').reset(); // Clear the form
+    } else {
+      alert('Error adding faculty member: ' + data.message);
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    alert('An error occurred while adding the faculty member.');
+  });
+});
+  </script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Remove Student</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='adminn.css') }}">
+</head>
+<body>
+  <!-- Navbar -->
+  <div class="navbar">
+    <ul>
+      <li><a href="{{'/admin1'}}">Home</a></li>
+      <li class="dropdown">
+        <a href="#" class="dropbtn">Manage Students</a>
+        <div class="dropdown-content">
+          <a href="{{ url_for('addStudent') }}">Add Student</a>
+          <!-- Corrected line below -->
+          <a href="{{ url_for('removeStudent') }}">Remove Student</a>
+          <a href="{{ url_for('modifyStudent') }}">Modify Student Details</a>
+          <a href="{{ url_for('viewStudent') }}">View Student Details</a>
+        </div>
+      </li>
+      <li class="dropdown">
+        <a href="#" class="dropbtn">Manage Faculty</a>
+        <div class="dropdown-content">
+          <a href="{{'/addFaculty'}}">Add Faculty</a>
+          <a href="{{'/removeFaculty'}}">Remove Faculty</a>
+          <a href="{{'/modifyFaculty'}}">Modify Faculty Details</a>
+          <a href="{{'/viewFaculty'}}">View Facuilty Details</a>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Main Content -->
+<!-- Add this below <body> tag -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="flash-message {{ category }}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+  <div class="container">
+    <!-- Single Deletion Form -->
+    <div class="form-section">
+        <h2>Delete Single Student</h2>
+        <form method="POST" action="/delete_student">
+            <div class="form-group">
+                <label>Registration Number:</label>
+                <input type="text" name="regd" required>
+            </div>
+            <button type="submit">Delete Student</button>
+        </form>
+    </div>
+
+    <!-- Bulk CSV Deletion Form -->
+    <div class="form-section">
+        <h2>Bulk Delete via CSV</h2>
+        <form method="POST" action="/delete_csv" enctype="multipart/form-data">
+            <div class="form-group">
+                <label>CSV File (Only 'regd' column):</label>
+                <input type="file" name="file" accept=".csv" required>
+            </div>
+            <button type="submit">Delete Students</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

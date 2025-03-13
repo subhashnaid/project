@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Remove Faculty</title>
+  <link rel="stylesheet" href="static/adminn.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <div class="navbar">
+    <ul>
+      <li><a href="{{'/admin_dashboard'}}">Home</a></li>
+      <li class="dropdown">
+        <a href="#" class="dropbtn">Manage Students</a>
+        <div class="dropdown-content">
+          <a href="{{'/addStudent'}}">Add Student</a>
+          <a href="{{'/removeStudent'}}">Remove Student</a>
+          <a href="{{'/modifyStudent'}}">Modify Student Details</a>
+          <a href="{{'/viewStudent'}}">View Student Details</a>
+        </div>
+      </li>
+      <li class="dropdown">
+        <a href="#" class="dropbtn">Manage Faculty</a>
+        <div class="dropdown-content">
+          <a href="{{'/addFaculty'}}">Add Faculty</a>
+          <a href="{{'/removeFaculty'}}">Remove Faculty</a>
+          <a href="{{'/modifyFaculty'}}">Modify Faculty Details</a>
+          <a href="{{'/viewFaculty'}}">View Faculty Details</a>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Main Content -->
+  <div class="container">
+    <h1>Remove Faculty</h1>
+    <div class="search-section">
+      <h2>Search for Faculty to Remove</h2>
+      <input type="email" id="remove-faculty-email" placeholder="Enter faculty email...">
+      <button id="remove-faculty-btn">Remove</button>
+      <p id="remove-faculty-message"></p>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('remove-faculty-btn').addEventListener('click', function () {
+      const email = document.getElementById('remove-faculty-email').value.trim();
+
+      if (!email) {
+        alert('Please enter a valid email address.');
+        return;
+      }
+
+      // Send the email to the server for deletion
+      fetch('/remove_faculty', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: email }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          document.getElementById('remove-faculty-message').textContent = data.message;
+        } else {
+          document.getElementById('remove-faculty-message').textContent = data.message;
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('remove-faculty-message').textContent = 'An error occurred while removing the faculty.';
+      });
+    });
+  </script>
+</body>
+</html>

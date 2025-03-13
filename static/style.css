@@ -1,0 +1,114 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #3a00f8; /* Purple background color */
+}
+
+.wrapper {
+    width: 560px;
+    background: #f0f0f0; 
+    color: #000000;
+    border-radius: 10px;
+    padding: 40px;
+    text-align: center;
+}
+
+.wrapper .logo-container img {
+    width: 500px; 
+    height: auto;
+    margin: 0 auto;
+}
+
+.wrapper h1 {
+    font-size: 36px;
+    margin-bottom: 30px;
+}
+
+.wrapper .input-box {
+    position: relative;
+    width: 100%;
+    height: 50px;
+    margin: 20px 0;
+}
+
+.input-box input {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    border: 2px solid rgba(0, 0, 0, 0.3); 
+    border-radius: 40px;
+    font-size: 16px;
+    color: #000000;
+    padding: 15px 45px 15px 20px;
+}
+
+.input-box input::placeholder {
+    color: #000000;
+}
+
+.input-box i {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px;
+}
+
+.wrapper .remember-forgot {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    margin: -15px 0 20px;
+}
+
+.remember-forgot label input {
+    accent-color: #000000;
+    margin-right: 3px;
+}
+
+.remember-forgot a {
+    color: #000000;
+    text-decoration: none;
+}
+
+.remember-forgot a:hover {
+    text-decoration: underline;
+}
+
+.wrapper .btn {
+    width: 100%;
+    height: 45px;
+    background: #fafafa;
+    border: none;
+    outline: none;
+    border-radius: 40px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+    cursor: pointer;
+    font-size: 16px;
+    color: #333;
+    font-weight: 600;
+}
+
+.wrapper .btn:hover {
+    background-color: #5f27cd; /* Darker purple on hover */
+    color: #fff;
+}
+
+.toggle-password {
+    cursor: pointer;
+    font-size: 18px;
+    position: absolute;
+    right: 40px;
+    top: 15px;
+}

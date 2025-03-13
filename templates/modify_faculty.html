@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modify Faculty Details</title>
+  <link rel="stylesheet" href="static/adminn.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <div class="navbar">
+    <ul>
+      <li><a href="{{'/admin_dashboard'}}">Home</a></li>
+      <li class="dropdown">
+        <a href="#" class="dropbtn">Manage Students</a>
+        <div class="dropdown-content">
+          <a href="{{'/addStudent'}}">Add Student</a>
+          <a href="{{'/removeStudent'}}">Remove Student</a>
+          <a href="{{'/modifyStudent'}}">Modify Student Details</a>
+          <a href="{{'/viewStudent'}}">View Student Details</a>
+        </div>
+      </li>
+      <li class="dropdown">
+        <a href="#" class="dropbtn">Manage Faculty</a>
+        <div class="dropdown-content">
+          <a href="{{'/addFaculty'}}">Add Faculty</a>
+          <a href="{{'/removeFaculty'}}">Remove Faculty</a>
+          <a href="{{'/modifyFaculty'}}">Modify Faculty Details</a>
+          <a href="{{'/viewFaculty'}}">View Faculty Details</a>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Main Content -->
+  <div class="container">
+    <h1>Modify Faculty Details</h1>
+    <div class="search-section">
+      <h2>Search for Faculty by Department</h2>
+      <input type="text" id="modify-faculty-department" placeholder="Enter department...">
+      <button id="modify-faculty-btn">Search</button>
+      <p id="modify-faculty-message"></p>
+    </div>
+
+    <!-- Faculty List (Hidden by default) -->
+    <div id="faculty-list" style="display: none;">
+      <h2>Select Faculty to Modify</h2>
+      <ul id="faculty-result-list"></ul>
+    </div>
+
+    <!-- Modify Faculty Form (Hidden by default) -->
+    <div id="modify-form" style="display: none;">
+      <h2>Modify Faculty</h2>
+      <form id="faculty-modify-form">
+        <input type="hidden" id="original-email" name="original_email"> <!-- Hidden field for original email -->
+        
+        <label for="first-name">First Name:</label>
+        <input type="text" id="first-name" name="first_name" required><br>
+
+        <label for="last-name">Last Name:</label>
+        <input type="text" id="last-name" name="last_name" required><br>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required><br>
+
+        <label for="department">Department:</label>
+        <input type="text" id="department" name="dept" required><br>
+
+        <label for="faculty-phone">Faculty Phone:</label>
+        <input type="text" id="faculty-phone" name="faculty_phone" required><br>
+
+        <label for="room-no">Room Number:</label>
+        <input type="text" id="room-no" name="room_no" required><br>
+
+        <label for="category">Category:</label>
+        <select id="category" name="category" required>
+          <option value="HOD">HOD</option>
+          <option value="Incharge">Incharge</option>
+        </select><br>
+
+        <label for="photo">Photo:</label>
+        <input type="file" id="photo" name="photo" accept="image/*"><br>
+
+        <button type="submit">Save Changes</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Fetch faculty members by department
+    document.getElementById('modify-faculty-btn').addEventListener('click', function () {
+      const department = document.getElementById('modify-faculty-department').value.trim();
+
+      if (!department) {
+        alert('Please enter a valid department.');
+        return;
+      }
+
+      // Fetch faculty members by department
+      fetch(`/get_faculty_by_department?department=${department}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            const facultyList = document.getElementById('faculty-result-list');
+            facultyList.innerHTML = '';
+
+            if (data.faculty.length === 0) {
+              facultyList.innerHTML = '<li>No faculty members found in this department.</li>';
+            } else {
+              data.faculty.forEach(faculty => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `${faculty.first_name} ${faculty.last_name} (${faculty.email}) <button onclick="showModifyForm('${faculty.email}')">Modify</button>`;
+                facultyList.appendChild(listItem);
+              });
+            }
+
+            // Show the faculty list
+            document.getElementById('faculty-list').style.display = 'block';
+          } else {
+            document.getElementById('modify-faculty-message').textContent = data.message;
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          document.getElementById('modify-faculty-message').textContent = 'An error occurred while fetching faculty members.';
+        });
+    });
+
+    // Show modify form for a specific faculty member
+    function showModifyForm(email) {
+      // Fetch faculty details by email
+      fetch(`/get_faculty?email=${email}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // Populate the form with the fetched data
+            document.getElementById('first-name').value = data.faculty.first_name;
+            document.getElementById('last-name').value = data.faculty.last_name;
+            document.getElementById('email').value = data.faculty.email;
+            document.getElementById('original-email').value = data.faculty.email; // Populate hidden field
+            document.getElementById('department').value = data.faculty.dept;
+            document.getElementById('faculty-phone').value = data.faculty.faculty_phone;
+            document.getElementById('room-no').value = data.faculty.room_no;
+            document.getElementById('category').value = data.faculty.category;
+
+            // Show the modify form
+            document.getElementById('modify-form').style.display = 'block';
+          } else {
+            alert(data.message);
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('An error occurred while fetching faculty details.');
+        });
+    }
+
+    // Handle form submission to update faculty details
+    document.getElementById('faculty-modify-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const formData = new FormData(this);
+
+      fetch('/modify_faculty', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert('Faculty details updated successfully!');
+        } else {
+          alert('Error updating faculty details: ' + data.message);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while updating faculty details.');
+      });
+    });
+  </script>
+</body>
+</html>

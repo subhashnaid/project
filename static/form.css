@@ -1,0 +1,142 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background: linear-gradient(to right, #eef2f3, #8e9eab);
+    min-height: 100vh;
+}
+.notice p{
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+#clr{
+    color:#0056b3;
+    font-weight: 600;
+}
+
+/* Centering the form properly */
+.form-container {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    max-width: 500px;
+    width: 100%;
+    margin: 20px auto;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+label {
+    font-weight: bold;
+    display: block;
+    margin: 10px 0 5px;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    outline: none;
+}
+
+fieldset {
+    border: none;
+    padding: 10px 0;
+}
+
+/* Aligning Permission Type in a straight line */
+.permission-type {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+textarea {
+    width: 95%; /* Ensures it takes the full width of the container */
+    height: 70px; /* Fixed height */
+    resize: none; /* Prevents resizing */
+}
+
+.permission-type input {
+    width: auto;
+    margin-right: 5px;
+}
+
+/* Buttons */
+.btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    color: white;
+    transition: 0.3s;
+}
+
+.btn:hover {
+    opacity: 0.8;
+}
+
+.btn-submit {
+    background-color: #28a745;
+}
+
+.btn-reset {
+    background-color: #dc3545;
+    margin-top: 10px;
+}
+
+.btn-back {
+    background-color: #007bff;
+    width: 120px;
+    padding: 8px;
+    font-size: 14px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    display: block;
+    margin: 0 auto 15px;
+    text-align: center;
+    color: white;
+    text-decoration: none;
+}
+
+.btn-back:hover {
+    background-color: #0056b3;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+    .form-container {
+        width: 90%;
+        padding: 20px;
+        margin: 10px auto;
+    }
+    .permission-type {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    .btn {
+        font-size: 14px;
+        padding: 10px;
+    }
+}

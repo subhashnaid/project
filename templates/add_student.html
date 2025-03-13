@@ -1,0 +1,138 @@
+<!-- add_student.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Student</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='adminn.css') }}">
+</head>
+<body>
+  <div class="navbar">
+    <ul>
+      <li><a href="{{'/admin_dashboard'}}">Home</a></li>
+      <li class="dropdown">
+        <a href="#" class="dropbtn">Manage Students</a>
+        <div class="dropdown-content">
+          <a href="{{'/addStudent'}}">Add Student</a>
+          <a href="{{'/removeStudent'}}">Remove Student</a>
+          <a href="{{'/modifyStudent'}}">Modify Student Details</a>
+          <a href="{{'/viewStudent'}}">View Student Details</a>
+        </div>
+      </li>
+      <li class="dropdown">
+        <a href="#" class="dropbtn">Manage Faculty</a>
+        <div class="dropdown-content">
+          <a href="{{'/addFaculty'}}">Add Faculty</a>
+          <a href="{{'/removeFaculty'}}">Remove Faculty</a>
+          <a href="{{'/modifyFaculty'}}">Modify Faculty Details</a>
+          <a href="{{'/viewFaculty'}}">View Faculty Details</a>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <h1>Add New Student</h1>
+    
+    <!-- CSV Upload Section -->
+    <div class="form-section">
+      <h2>Upload CSV File</h2>
+      <form id="csv-upload-form" action="{{ url_for('upload1') }}" method="post" enctype="multipart/form-data">
+        <label for="student-file">Upload CSV (columns: regd,first_name,last_name,email,dept,student_phone,parent_phone,address,password,photo,category)</label>
+        <input type="file" id="student-file" name="file" accept=".csv" required>
+        <button type="submit">Upload CSV</button>
+      </form>
+    </div>
+
+    <!-- Single Student Entry Section -->
+    <div class="form-section">
+      <h2>Add Single Student</h2>
+      <form id="single-student-form" action="{{ url_for('add_single_student') }}" method="post" enctype="multipart/form-data">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="regd">Registration Number:</label>
+            <input type="text" id="regd" name="regd" required pattern="[A-Za-z0-9]{10}">
+          </div>
+
+          <div class="form-group">
+            <label for="first_name">First Name:</label>
+            <input type="text" id="first_name" name="first_name" required>
+          </div>
+
+          <div class="form-group">
+            <label for="last_name">Last Name:</label>
+            <input type="text" id="last_name" name="last_name" required>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+          </div>
+
+          <div class="form-group">
+            <label for="dept">Department:</label>
+            <select id="dept" name="dept" required>
+              <option value="">Select Department</option>
+              <option value="CSE">CSE</option>
+              <option value="ECE">ECE</option>
+              <option value="MECH">MECH</option>
+              <option value="CIC">CIC</option>
+              <option value="ECT">ECT</option>
+              <option value="CSM">CSM</option>
+              <option value="CSD">CSD</option>
+              <option value="AIML">AIML</option>
+              <option value="CIVIL">CIVIL</option>
+              <option value="CST">CST</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="student_phone">Student Phone:</label>
+            <input type="tel" id="student_phone" name="student_phone" required pattern="[0-9]{10}">
+          </div>
+
+          <div class="form-group">
+            <label for="parent_phone">Parent Phone:</label>
+            <input type="tel" id="parent_phone" name="parent_phone" required pattern="[0-9]{10}">
+          </div>
+
+          <div class="form-group">
+            <label for="address">Address:</label>
+            <textarea id="address" name="address" required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required minlength="8">
+          </div>
+
+          <div class="form-group full-width">
+            <label for="photo">Student Photo:</label>
+            <input type="file" id="photo" name="photo" accept="image/*" required>
+          </div>
+
+          <div class="form-group">
+            <label for="category">Category:</label>
+            <select id="category" name="category" required>
+              
+              <option value="student">Student</option>
+            </select>
+          </div>
+
+          
+        </div>
+        <button type="submit">Add Student</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

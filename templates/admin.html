@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel</title>
+  <link rel="stylesheet" href="static/adminn.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <div class="navbar">
+    <ul>
+      <li><a href="{{ url_for('admin') }}">Home</a></li>
+      <li class="dropdown">
+        <a href="#" class="dropbtn">Manage Students</a>
+        <div class="dropdown-content">
+          <a href="{{'/addStudent'}}">Add Student</a>
+          <a href="{{'/removeStudent'}}">Remove Student</a>
+          <a href="{{'/modifyStudent'}}">Modify Student Details</a>
+          <a href="{{'/viewStudent'}}">View Student Details</a>
+        </div>
+      </li>
+      <li class="dropdown">
+        <a href="#" class="dropbtn">Manage Faculty</a>
+        <div class="dropdown-content">
+          <a href="{{'/addFaculty'}}">Add Faculty</a>
+          <a href="{{'/removeFaculty'}}">Remove Faculty</a>
+          <a href="{{'/modifyFaculty'}}">Modify Faculty Details</a>
+          <a href="{{'/viewFaculty'}}">View Faculty Details</a>
+        </div>
+      </li>
+      <!-- Logout and Change Password Buttons -->
+      <li><a href="{{ url_for('logout') }}">Logout</a></li>
+      <li><a href="{{ url_for('new_password') }}">Change Password</a></li>
+    </ul>
+  </div>
+
+  <!-- Main content -->
+  <div class="container">
+    <h1>Admin Panel</h1>
+    <h1>Welcome, {{ session.get('username') }}!</h1>
+
+    <!-- Layout with Flexbox -->
+    <div class="search-container">
+      <!-- Student Search Section -->
+      <div class="search-section" id="student-search-section">
+          <h2>Search for Students</h2>
+          <form id="student-search-form" class="f1">
+              <input type="text" id="student-search" placeholder="Search by registration number...">
+              <button type="button" id="search-student-btn">Search</button> <!-- Use type="button" -->
+          </form>
+          <ul id="student-result-list"></ul>
+      </div>
+
+      <!-- Faculty Search Section -->
+      <div class="search-section" id="faculty-search-section">
+          <h2>Search for Faculty</h2>
+          <form id="faculty-search-form">
+              <input type="text" id="faculty-search" placeholder="Search by department...">
+              <button type="button" id="search-faculty-btn">Search</button> <!-- Use type="button" -->
+          </form>
+          <ul id="faculty-result-list"></ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Prevent form submission and handle student search
+    document.getElementById('student-search-form').addEventListener('submit', function (event) {
+        event.preventDefault(); // Prevent form submission
+        searchStudent();
+    });
+
+    document.getElementById('search-student-btn').addEventListener('click', function () {
+        searchStudent();
+    });
+
+    function searchStudent() {
+        const searchTerm = document.getElementById('student-search').value.trim();
+
+        if (!searchTerm) {
+            alert("Please enter a registration number.");
+            return;
+        }
+
+        fetch('/get_student_details', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ student_regd: searchTerm }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            const resultList = document.getElementById('student-result-list');
+            resultList.innerHTML = '';
+
+            if (data.success) {
+                const student = data.student;
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `
+                    <strong>Name:</strong> ${student.name}<br>
+                    <strong>Register Number:</strong> ${student.register_number}<br>
+                    <strong>Department:</strong> ${student.department}<br>
+                    <strong>Phone:</strong> ${student.phone}<br>
+                    <strong>Email:</strong> ${student.email}<br>
+                    <strong>Leave Requests:</strong> ${student.leave_requests}<br>
+                    <strong>Outing Requests:</strong> ${student.outing_requests}
+                    <img src=${student.photo}>
+                `;
+                resultList.appendChild(listItem);
+            } else {
+                resultList.innerHTML = '<li>No results found</li>';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    // Prevent form submission and handle faculty search
+    document.getElementById('faculty-search-form').addEventListener('submit', function (event) {
+        event.preventDefault(); // Prevent form submission
+        searchFaculty();
+    });
+
+    document.getElementById('search-faculty-btn').addEventListener('click', function () {
+        searchFaculty();
+    });
+
+    function searchFaculty() {
+        const searchTerm = document.getElementById('faculty-search').value.trim();
+
+        if (!searchTerm) {
+            alert("Please enter a department name.");
+            return;
+        }
+
+        fetch(`/get_faculty_by_department?department=${encodeURIComponent(searchTerm)}`)
+        .then(response => response.json())
+        .then(data => {
+            const resultList = document.getElementById('faculty-result-list');
+            resultList.innerHTML = '';
+
+            if (data.success) {
+                data.faculty.forEach(faculty => {
+                    const listItem = document.createElement('li');
+                    listItem.innerHTML = `
+                        <strong>Name:</strong> ${faculty.first_name} ${faculty.last_name}<br>
+                        <strong>Email:</strong> ${faculty.email}<br>
+                        <strong>Department:</strong> ${faculty.dept}<br>
+                        <strong>Phone:</strong> ${faculty.faculty_phone}<br>
+                        <strong>Room No:</strong> ${faculty.room_no}<br>
+                        <strong>Category:</strong> ${faculty.category}
+                        <img src=${faculty.photo}>
+                    `;
+                    resultList.appendChild(listItem);
+                });
+            } else {
+                resultList.innerHTML = '<li>No results found</li>';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+  </script>
+  <!-- <script>
+    window.onload = function () {
+      fetch("{{ url_for('home') }}", { method: "HEAD", cache: "no-cache" })
+        .then(response => {
+          if (!document.cookie.includes("session")) {
+            window.location.href = "{{ url_for('home') }}";  // Redirect if session is missing
+          }
+        });
+    };
+  </script> -->
+  
+</body>
+</html>

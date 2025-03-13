@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>View Faculty Details</title>
+  <link rel="stylesheet" href="static/adminn.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <div class="navbar">
+    <ul>
+      <li><a href="{{'/admin_dashboard'}}">Home</a></li>
+      <li class="dropdown">
+        <a href="#" class="dropbtn">Manage Students</a>
+        <div class="dropdown-content">
+          <a href="{{'/addStudent'}}">Add Student</a>
+          <a href="{{'/removeStudent'}}">Remove Student</a>
+          <a href="{{'/modifyStudent'}}">Modify Student Details</a>
+          <a href="{{'/viewStudent'}}">View Student Details</a>
+        </div>
+      </li>
+      <li class="dropdown">
+        <a href="#" class="dropbtn">Manage Faculty</a>
+        <div class="dropdown-content">
+          <a href="{{'/addFaculty'}}">Add Faculty</a>
+          <a href="{{'/removeFaculty'}}">Remove Faculty</a>
+          <a href="{{'/modifyFaculty'}}">Modify Faculty Details</a>
+          <a href="{{'/viewFaculty'}}">View Faculty Details</a>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Main Content -->
+  <div class="container">
+    <h1>View Faculty Details</h1>
+    <div id="faculty-list">
+      <h2>Faculty Members</h2>
+      <ul id="faculty-result-list"></ul>
+    </div>
+  </div>
+
+  <script>
+    // Fetch all faculty members
+    fetch('/get_all_faculty')
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          const facultyList = document.getElementById('faculty-result-list');
+          facultyList.innerHTML = '';
+
+          if (data.faculty.length === 0) {
+            facultyList.innerHTML = '<li>No faculty members found.</li>';
+          } else {
+            data.faculty.forEach(faculty => {
+              const listItem = document.createElement('li');
+              listItem.innerHTML = `
+                <strong>${faculty.first_name} ${faculty.last_name}</strong><br>
+                Email: ${faculty.email}<br>
+                Department: ${faculty.dept}<br>
+                Phone: ${faculty.faculty_phone}<br>
+                Room: ${faculty.room_no}<br>
+                Category: ${faculty.category}<br>
+                <img src="${faculty.photo}" alt="Faculty Photo" width="100"><br><br>
+              `;
+              facultyList.appendChild(listItem);
+            });
+          }
+        } else {
+          alert(data.message);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while fetching faculty details.');
+      });
+  </script>
+</body>
+</html>

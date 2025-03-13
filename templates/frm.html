@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Permission Form</title>
+    <link rel="stylesheet" href="static/form.css">
+</head>
+<body>
+
+    <div class="form-container">
+        <h1>Permission Form</h1>
+        <a href="/dashboard" class="btn-back">Back</a>
+        <div class="notice">
+            <p style="color: red; font-weight: bolder;">Note :</p>
+            <p><span id="clr">Outing</span> : 2 times per month</p>
+            <p><span id="clr">Leave</span> : 1 time per month</p>
+            </div>
+            <br>
+        <form id="permission-form">
+           
+            <label>Permission Type:</label>
+            <div class="permission-type">
+                <input type="radio" id="outing" name="status" value="Outing" required>
+                <label for="outing">Outing</label>
+
+                <input type="radio" id="leave" name="status" value="Leave">
+                <label for="leave">Leave</label>
+            </div>
+
+            <!-- Outing Time Fields -->
+            <div id="outing-time" style="display: none;">
+                <label for="start-time">Start Time:</label>
+                <input type="time" id="start-time" name="start-time">
+
+                <label for="end-time">End Time:</label>
+                <input type="time" id="end-time" name="end-time">
+            </div>
+
+            <!-- Leave Date Fields -->
+            <div id="leave-date" style="display: none;">
+                <label for="start-date">Start Date:</label>
+                <input type="date" id="start-date" name="start-date">
+
+                <label for="end-date">End Date:</label>
+                <input type="date" id="end-date" name="end-date">
+            </div>
+
+            <label for="cause">Cause:</label>
+            <textarea id="cause" name="cause" placeholder="Enter the reason for permission..." required></textarea>
+
+            <button type="submit" class="btn btn-submit">Submit</button>
+            <button type="reset" class="btn btn-reset">Reset</button>
+        </form>
+    </div>
+
+    <!-- <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const outingRadio = document.getElementById("outing");
+            const leaveRadio = document.getElementById("leave");
+            const outingTimeDiv = document.getElementById("outing-time");
+            const leaveDateDiv = document.getElementById("leave-date");
+        
+            function toggleFields() {
+                if (outingRadio.checked) {
+                    outingTimeDiv.style.display = "block";
+                    leaveDateDiv.style.display = "none";
+                } else if (leaveRadio.checked) {
+                    outingTimeDiv.style.display = "none";
+                    leaveDateDiv.style.display = "block";
+                }
+            }
+        
+            // Ensure correct fields are displayed on page load
+            toggleFields();
+        
+            // Event Listeners for radio buttons
+            outingRadio.addEventListener("change", toggleFields);
+            leaveRadio.addEventListener("change", toggleFields);
+        
+            // Handle form submission
+            document.getElementById('permission-form').addEventListener('submit', async function (e) {
+                e.preventDefault();  // Prevent traditional form submission
+        
+                if (!confirm("Are you sure you want to submit the form?")) {
+                    return;
+                }
+        
+                // Gather form data
+                const formData = {
+                    permission_type: document.querySelector('input[name="status"]:checked').value,
+                    start_time: document.getElementById("start-time").value || null,
+                    end_time: document.getElementById("end-time").value || null,
+                    start_date: document.getElementById("start-date").value || null,
+                    end_date: document.getElementById("end-date").value || null,
+                    reason: document.getElementById("cause").value
+                };
+        
+                console.log("Submitting form data:", formData); // Debugging
+        
+                try {
+                    const response = await fetch('/submit_permission', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+        
+                    const result = await response.json();
+                    alert(result.message);  // Show response message
+        
+                    if (response.ok) {
+                        document.getElementById("permission-form").reset(); // Reset form on success
+                        toggleFields();  // Hide unused fields
+                    }
+        
+                } catch (error) {
+                    console.error("Error submitting form:", error);
+                    alert("An error occurred. Please try again.");
+                }
+            });
+        });
+        </script> -->
+        
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const outingRadio = document.getElementById("outing");
+                const leaveRadio = document.getElementById("leave");
+                const outingTimeDiv = document.getElementById("outing-time");
+                const leaveDateDiv = document.getElementById("leave-date");
+                const startTimeInput = document.getElementById("start-time");
+                const endTimeInput = document.getElementById("end-time");
+                const startDateInput = document.getElementById("start-date");
+                const endDateInput = document.getElementById("end-date");
+            
+                function toggleFields() {
+                    if (outingRadio.checked) {
+                        outingTimeDiv.style.display = "block";
+                        leaveDateDiv.style.display = "none";
+                    } else if (leaveRadio.checked) {
+                        outingTimeDiv.style.display = "none";
+                        leaveDateDiv.style.display = "block";
+                    }
+                }
+            
+                // Ensure correct fields are displayed on page load
+                toggleFields();
+            
+                // Event Listeners for radio buttons
+                outingRadio.addEventListener("change", toggleFields);
+                leaveRadio.addEventListener("change", toggleFields);
+            
+                // Set min value for end time when start time changes
+                startTimeInput.addEventListener("change", function () {
+                    if (startTimeInput.value) {
+                        let [hours, minutes] = startTimeInput.value.split(":").map(Number);
+                        minutes += 1; // Add 1 minute
+            
+                        if (minutes === 60) {
+                            minutes = 0;
+                            hours += 1;
+                        }
+                        if (hours === 24) {
+                            hours = 0;
+                        }
+            
+                        // Format time as HH:MM
+                        const minEndTime = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+                        endTimeInput.min = minEndTime;
+                        endTimeInput.value = ""; // Reset end time to avoid conflicts
+            
+                        console.log("Min End Time Set to:", minEndTime); // Debugging
+            
+                        // Force update for browsers that don't respect `min` update
+                        setTimeout(() => {
+                            endTimeInput.setAttribute("min", minEndTime);
+                            endTimeInput.value = minEndTime; // Set the end time to the minimum allowed time
+                        }, 10);
+                    }
+                });
+            
+                // Set min value for end date when start date changes
+                startDateInput.addEventListener("change", function () {
+                    if (startDateInput.value) {
+                        const minEndDate = new Date(startDateInput.value);
+                        minEndDate.setDate(minEndDate.getDate() + 1); // Next day
+            
+                        // Format date to YYYY-MM-DD
+                        const formattedMinDate = minEndDate.toISOString().split("T")[0];
+                        endDateInput.min = formattedMinDate;
+                        endDateInput.value = ""; // Reset end date to avoid conflicts
+            
+                        console.log("Min End Date Set to:", formattedMinDate); // Debugging
+                    }
+                });
+            
+                // Handle form submission
+                document.getElementById('permission-form').addEventListener('submit', async function (e) {
+                    e.preventDefault();  // Prevent traditional form submission
+            
+                    if (!confirm("Are you sure you want to submit the form?")) {
+                        return;
+                    }
+            
+                    // Gather form data
+                    const formData = {
+                        permission_type: document.querySelector('input[name="status"]:checked').value,
+                        start_time: startTimeInput.value || null,
+                        end_time: endTimeInput.value || null,
+                        start_date: startDateInput.value || null,
+                        end_date: endDateInput.value || null,
+                        reason: document.getElementById("cause").value
+                    };
+            
+                    console.log("Submitting form data:", formData); // Debugging
+            
+                    try {
+                        const response = await fetch('/submit_permission', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(formData)
+                        });
+            
+                        const result = await response.json();
+                        alert(result.message);  // Show response message
+            
+                        if (response.ok) {
+                            document.getElementById("permission-form").reset(); // Reset form on success
+                            toggleFields();  // Hide unused fields
+                        }
+            
+                    } catch (error) {
+                        console.error("Error submitting form:", error);
+                        alert("An error occurred. Please try again.");
+                    }
+                });
+            });
+            </script>
+    </body>
+</html>

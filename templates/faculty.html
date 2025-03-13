@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Faculty Dashboard</title>
+  <link rel="stylesheet" href="static/fac.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+  <div class="container">
+    <h1 class="dashboard-title">Faculty Dashboard</h1>
+    
+    <div class="faculty-info">
+      <div class="faculty-photo">
+        <img src="{{faculty.photo}}" alt="Faculty">
+      </div>
+      
+      <div class="faculty-details">
+        <h2 class="faculty-name">{{faculty.first_name}} {{faculty.last_name}}</h2>
+        
+        <div class="details-grid">
+          <div class="detail-item"><i class="fas fa-user-tie"></i> <span class="detail-text">{{faculty.category}}</span></div>
+          <div class="detail-item"><i class="fas fa-building"></i> <span class="detail-text">{{faculty.dept}}</span></div>
+          <div class="detail-item"><i class="fas fa-envelope"></i> <span class="detail-text">{{faculty.email}}</span></div>
+          <div class="detail-item"><i class="fas fa-phone"></i> <span class="detail-text">{{faculty.faculty_phone}}</span></div>
+          <div class="detail-item"><i class="fas fa-door-closed"></i> <span class="detail-text">{{faculty.room_no}}</span></div>
+          <div class="button-container">
+            <a href="/logout"><button class="btn-logout">Logout</button></a>
+            <a href="/new_password"><button class="btn-primary">Change Password</button></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="permissions-table-container">
+      <div class="table-header">
+        <h3>Leave Permission Requests</h3>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="permissions-table">
+          <thead>
+            <tr>
+              <th>Student Name</th>
+              <th>Register Number</th>
+              <th>Leave Type</th>
+              <th>Reason</th>
+              <th>Time</th>
+              <th>HOD Status</th>
+              <th>Incharge Status</th>  
+              <th>Message</th>
+              <th>Action</th>
+              
+            </tr>
+          </thead>
+          <tbody>
+            {% for request in leave_requests %}
+            <tr id="request-{{ request.id }}">
+              <td class="student-name">{{ request.student_name }}</td>
+              <td>
+                <a href="/student_dashboard/{{ request.student_regd }}" class="student-link">{{ request.student_regd }}</a>
+              </td>
+              
+              <td>{{ request.permission_type }}</td>
+              <td>{{ request.reason }}</td>
+              <td>
+                {% if request.permission_type == 'Leave' %}
+                    {{ request.start_date }} - {{ request.end_date }}
+                {% else %}
+                    {{ request.start_time }} - {{ request.end_time }}
+                {% endif %}
+              </td>
+              <td class="status-column">{{ request.hod_status }}</td>
+              <td class="status-column">{{ request.incharge_status }}</td>
+              <td>
+                <input type="text" id="message-{{ request.id }}" placeholder="Enter reason for rejection">
+            </td>
+              <td class="action-buttons">
+                {% if faculty.category.lower() == 'hod' and request.permission_type == 'Leave' and request.hod_status == 'Pending' %}
+                  <button class="accept-button" onclick="processRequest({{ request.id }}, 'approve', 'hod')">Approve</button>
+                  <button class="decline-button" onclick="processRequest({{ request.id }}, 'reject', 'hod')">Reject</button>
+                {% elif faculty.category.lower() == 'incharge' and request.incharge_status == 'Pending' %}
+                  <button class="accept-button" onclick="processRequest({{ request.id }}, 'approve', 'incharge')">Approve</button>
+                  <button class="decline-button" onclick="processRequest({{ request.id }}, 'reject', 'incharge')">Reject</button>
+                {% else %}
+                  <span class="status-{{ request.status.lower() }}">{{ request.status }}</span>
+                {% endif %}
+              </td>
+              
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+//     function processRequest(requestId, action, role) {
+//   fetch('/process_request', {
+//     method: 'POST',
+//     headers: { 'Content-Type': 'application/json' },
+//     body: JSON.stringify({ request_id: requestId, action: action, role: role })
+//   })
+//   .then(response => response.json())
+//   .then(data => {
+//     if (data.success) {
+//       let row = document.getElementById(`request-${requestId}`);
+//       let statusColumns = row.querySelectorAll('.status-column');
+
+//       if (role === 'hod') {
+//         statusColumns[0].innerText = data.new_status; // HOD status column
+//       } else if (role === 'incharge') {
+//         statusColumns[1].innerText = data.new_status; // Incharge status column
+//       }
+
+//       let actionButtons = row.querySelector('.action-buttons');
+//       actionButtons.innerHTML = `<span class="status-${data.new_status.toLowerCase()}">${data.new_status}</span>`;
+//     } else {
+//       alert(data.message || 'Error processing request');
+//     }
+//   })
+//   .catch(error => console.error('Error:', error));
+// }
+function processRequest(requestId, action, role) {
+    const message = document.getElementById(`message-${requestId}`).value;
+
+    fetch('/process_request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ request_id: requestId, action: action, role: role, message: message })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            let row = document.getElementById(`request-${requestId}`);
+            let statusColumns = row.querySelectorAll('.status-column');
+
+            if (role === 'hod') {
+                statusColumns[0].innerText = data.new_status; // HOD status column
+            } else if (role === 'incharge') {
+                statusColumns[1].innerText = data.new_status; // Incharge status column
+            }
+
+            let actionButtons = row.querySelector('.action-buttons');
+            actionButtons.innerHTML = `<span class="status-${data.new_status.toLowerCase()}">${data.new_status}</span>`;
+        } else {
+            alert(data.message || 'Error processing request');
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+  </script>
+  <!-- <script>
+    window.onload = function () {
+      fetch("{{ url_for('home') }}", { method: "HEAD", cache: "no-cache" })
+        .then(response => {
+          if (!document.cookie.includes("session")) {
+            window.location.href = "{{ url_for('home') }}";  // Redirect if session is missing
+          }
+        });
+    };
+  </script> -->
+  
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>View Student Details</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='adminn.css') }}">
+</head>
+<body>
+  <!-- Navbar -->
+  <div class="navbar">
+    <ul>
+      <li><a href="{{'/admin_dashboard'}}">Home</a></li>
+      <li class="dropdown">
+        <a href="#" class="dropbtn">Manage Students</a>
+        <div class="dropdown-content">
+          <a href="{{'/addStudent'}}">Add Student</a>
+          <a href="{{'/removeStudent'}}">Remove Student</a>
+          <a href="{{'/modifyStudent'}}">Modify Student Details</a>
+          <a href="{{'/viewStudent'}}">View Student Details</a>
+        </div>
+      </li>
+      <li class="dropdown">
+        <a href="#" class="dropbtn">Manage Faculty</a>
+        <div class="dropdown-content">
+          <a href="{{'/addFaculty'}}">Add Faculty</a>
+          <a href="{{'/removeFaculty'}}">Remove Faculty</a>
+          <a href="{{'/modifyFaculty'}}">Modify Faculty Details</a>
+          <a href="{{'/viewFaculty'}}">View Faculty Details</a>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="container">
+    <h1>View Student Details</h1>
+    
+    <!-- Department Selection -->
+    <div class="department-filter">
+      <label for="dept-select">Select Department:</label>
+      <select id="dept-select" onchange="loadStudents()">
+        <option value="NONE" selected disabled ></option>
+        <option value="CSE">CSE</option>
+              <option value="ECE">ECE</option>
+              <option value="MECH">MECH</option>
+              <option value="CIC">CIC</option>
+              <option value="ECT">ECT</option>
+              <option value="CSM">CSM</option>
+              <option value="CSD">CSD</option>
+              <option value="AIML">AIML</option>
+              <option value="CIVIL">CIVIL</option>
+      </select>
+    </div>
+
+    <!-- Student List -->
+    <div id="student-list">
+      <table>
+        <thead>
+          <tr>
+            <th>Regd No</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Parent Phone</th>
+            <th>Department</th>
+          </tr>
+        </thead>
+        <tbody id="students-table-body">
+          <!-- Dynamic content will be inserted here -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    function loadStudents() {
+    const dept = document.getElementById('dept-select').value;
+    fetch(`/get_students_by_dept?dept=${dept}`)
+        .then(response => response.json())
+        .then(data => {
+            const tbody = document.getElementById('students-table-body');
+            tbody.innerHTML = '';
+            
+            data.students.forEach(student => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${student.regd}</td>
+                    <td>${student.first_name} ${student.last_name}</td>
+                    <td>${student.email}</td>
+                    <td>${student.student_phone}</td>
+                    <td>${student.parent_phone}</td>
+                    <td>${student.dept}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        });
+}
+
+// Load all students initially
+loadStudents();
+  </script>
+</body>
+</html>

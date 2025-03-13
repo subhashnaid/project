@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modify Student Details</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='adminn.css') }}">
+</head>
+<body>
+  <div class="navbar">
+    <!-- Keep your existing navbar structure -->
+    <ul>
+      <li><a href="{{'/admin1'}}">Home</a></li>
+      <li class="dropdown">
+        <a href="#" class="dropbtn">Manage Students</a>
+        <div class="dropdown-content">
+          <a href="{{ url_for('addStudent') }}">Add Student</a>
+          <!-- Corrected line below -->
+          <a href="{{ url_for('removeStudent') }}">Remove Student</a>
+          <a href="{{ url_for('modifyStudent') }}">Modify Student Details</a>
+          <a href="{{ url_for('viewStudent') }}">View Student Details</a>
+        </div>
+      </li>
+      <li class="dropdown">
+        <a href="#" class="dropbtn">Manage Faculty</a>
+        <div class="dropdown-content">
+          <a href="{{'/addFaculty'}}">Add Faculty</a>
+          <a href="{{'/removeFaculty'}}">Remove Faculty</a>
+          <a href="{{'/modifyFaculty'}}">Modify Faculty Details</a>
+          <a href="{{'/viewFaculty'}}">View Facuilty Details</a>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <h1>Modify Student Details</h1>
+    
+    <!-- Search Section -->
+    <div class="search-section">
+      <h2>Enter Student Registration Number</h2>
+      <form id="search-form" onsubmit="return false;">
+        <input type="text" id="regd" name="regd" placeholder="Enter Registration Number" required>
+        <button onclick="fetchStudentDetails()">Search</button>
+      </form>
+    </div>
+
+    <!-- Modification Form (Initially hidden) -->
+    <div id="modify-form" style="display: none;">
+      <h2>Student Details</h2>
+      <form id="student-form" action="{{ url_for('modify_student') }}" method="POST">
+        <input type="hidden" id="original-regd" name="original_regd">
+        
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="regd">Registration Number:</label>
+            <input type="text" id="regd" name="regd" required>
+          </div>
+
+          <div class="form-group">
+            <label for="first_name">First Name:</label>
+            <input type="text" id="first_name" name="first_name" required>
+          </div>
+
+          <div class="form-group">
+            <label for="last_name">Last Name:</label>
+            <input type="text" id="last_name" name="last_name" required>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+          </div>
+
+          <div class="form-group">
+            <label for="dept">Department:</label>
+            <select id="dept" name="dept" required>
+              <option value="CSE">CSE</option>
+              <option value="ECE">ECE</option>
+              <option value="MECH">MECH</option>
+              <option value="CIC">CIC</option>
+              <option value="ECT">ECT</option>
+              <option value="CSM">CSM</option>
+              <option value="CSD">CSD</option>
+              <option value="AIML">AIML</option>
+              <option value="CIVIL">CIVIL</option>
+              <option value="CST">CST</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="student_phone">Student Phone:</label>
+            <input type="tel" id="student_phone" name="student_phone" pattern="[0-9]{10}" required>
+          </div>
+
+          <div class="form-group">
+            <label for="parent_phone">Parent Phone:</label>
+            <input type="tel" id="parent_phone" name="parent_phone" pattern="[0-9]{10}" required>
+          </div>
+
+          <div class="form-group">
+            <label for="address">Address:</label>
+            <textarea id="address" name="address" required></textarea>
+          </div>
+
+          <button type="submit">Update Student</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function fetchStudentDetails() {
+    const regd = document.getElementById('regd').value;
+    if (!regd) return;
+
+    fetch(`/get_student?regd=${regd}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
+                return;
+            }
+            
+            document.getElementById('modify-form').style.display = 'block';
+            document.getElementById('original-regd').value = data.regd;
+            
+            // Populate form fields
+            document.getElementById('regd').value = data.regd;
+            document.getElementById('first_name').value = data.first_name;
+            document.getElementById('last_name').value = data.last_name;
+            document.getElementById('email').value = data.email;
+            document.getElementById('dept').value = data.dept;
+            document.getElementById('student_phone').value = data.student_phone;
+            document.getElementById('parent_phone').value = data.parent_phone;
+            document.getElementById('address').value = data.address;
+        })
+        .catch(error => console.error('Error:', error));
+}
+  </script>
+</body>
+</html>

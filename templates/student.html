@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='studentt.css') }}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header Section -->
+        <header class="dashboard-header">
+            <div class="profile-section">
+                <img src="{{ url_for('static', filename='uploads/' + user.photo) }}" alt="Student Photo" class="main-photo">
+                    <h3>{{ user.first_name }} {{ user.last_name }}</h3>
+                    <p>ID: {{ user.regd }}</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="{{'/new_password'}}"><button class="change-password-btn">Change Password</button></a>
+                <a href="/"><button class="logout-btn">Logout</button></a>
+            </div>
+        </header>
+        
+        <!-- Main Content Section -->
+        <main class="dashboard-main">
+            <div class="student-details">
+                <h2>Student Information</h2>
+                <div class="info-row">
+                    <span class="info-label">Full Name:</span>
+                    <span class="info-value">{{ user.first_name }} {{ user.last_name }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Gender:</span>
+                    <span class="info-value">{{user.gender}}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Student ID:</span>
+                    <span class="info-value">{{ user.regd }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Department:</span>
+                    <span class="info-value">{{ user.dept }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Email:</span>
+                    <span class="info-value">{{ user.email }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Phone:</span>
+                    <span class="info-value">{{ user.student_phone }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Parent Phone:</span>
+                    <span class="info-value">{{ user.parent_phone }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Address:</span>
+                    <span class="info-value">{{ user.address }}</span>
+                </div>
+                <a href="/form" class="permission-btn">Request Permission</a>
+            </div>
+            
+            <div class="student-photo">
+                <img src="{{ url_for('static', filename='uploads/' + user.photo) }}" alt="Student Photo" class="main-photo">
+                <div class="photo-caption">
+                    <p>Student Photo</p>
+                </div>
+            </div>
+        </main>
+        
+        <div class="permission-history">
+            <h2>Permission History</h2>
+            <table>
+                <tr>
+                    <th>Request Type</th>
+                    <th>Start</th>
+                    <th>End</th>
+                    <th>Reason</th>
+                    <th>In-Charge Status</th>
+                    <th>HOD Status</th>
+                    <th>Final Status</th>
+                    <th>HOD_Message</th>
+                    <th>INC_Message</th>
+                </tr>
+                {% for request in all_requests %}
+                <tr class="{% if request.status == 'Approved' %}approved{% elif request.status == 'Rejected' %}denied{% endif %}">
+                    <td>{{ request.permission_type }}</td>
+                    <td>{{ request.start_date if request.start_date else request.start_time }}</td>
+                    <td>{{ request.end_date if request.end_date else request.end_time }}</td>
+                    <td>{{ request.reason }}</td>
+                    <td>{{ request.incharge_status }}</td>
+                    <td>{{ request.hod_status }}</td>
+                    <td>{{ request.status }}</td>
+                    <td>{{ request.hod_message }}</td> <!-- Display HOD's rejection message -->
+        <td>{{ request.incharge_message }}</td> 
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        
+        <!-- Footer Section -->
+        <footer class="dashboard-footer">
+            <p>&copy; <span id="currentYear"></span> SITE CIC STUDENTS. All rights reserved.</p>
+        </footer>
+    </div>
+    <script>
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+    </script>
+    <!-- <script>
+        window.onload = function () {
+          fetch("{{ url_for('home') }}", { method: "HEAD", cache: "no-cache" })
+            .then(response => {
+              if (!document.cookie.includes("session")) {
+                window.location.href = "{{ url_for('home') }}";  // Redirect if session is missing
+              }
+            });
+        };
+      </script> -->
+      
+</body>
+</html>
