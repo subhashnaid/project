@@ -34,7 +34,6 @@ packaging==24.2
 pandas==2.1.1
 pipwin==0.5.2
 psycopg2-binary==2.9.10
-PyAudio==0.2.14
 pycparser==2.22
 pyjsparser==2.7.1
 pymongo==4.11.1
