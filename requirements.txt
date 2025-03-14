@@ -39,7 +39,6 @@ pycparser==2.22
 pyjsparser==2.7.1
 pymongo==4.11.1
 pyngrok==7.2.3
-pywin32==306
 PyPrind==2.11.3
 pySmartDL==1.3.4
 PySocks==1.7.1
